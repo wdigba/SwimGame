@@ -11,13 +11,9 @@ class Player (val playerName: String,
             handCards.add(newCard)
         }
     }
-    fun removeCards(cardStack: MutableList<Card>) { //remove cards from player´s hand
-        if (cardStack.size<3) throw IllegalArgumentException ("Not enough cards in the stack")
+    fun removeCards() { //remove cards from player´s hand
         handCards.clear()
-        for (i in 1..3) {
-            val newCard = cardStack.removeAt(0)
-            handCards.add(newCard)
-        }
+
     }
     fun updatePoints (newPoints: Double) {
         points+=newPoints
