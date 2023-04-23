@@ -1,8 +1,15 @@
 package entity
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+/**
+This class contains unit tests for the [Swim] class
+ */
 class SwimTest {
-
+    /**
+     * Tests the constructor of the [Swim] class.
+     * It checks if the suit and value parameters are correctly set when creating a new swim game with predefined arguments:
+     * players, playerList and deckCards
+     */
     @Test
     fun testSwimConstructor() {
         val player1 = Player("Alice", mutableListOf())
@@ -31,8 +38,16 @@ class SwimTest {
         assertEquals(mutableListOf<Card>(), swim.midCards)
         assertEquals(deckCards, swim.deckCards)
     }
+    /**
+     * Tests the constructor of the [Swim] class.
+     * It checks if the suit and value parameters are correctly set when creating a new swim game with predefined arguments:
+     * numberOfPasses, remainingTurns, lastRound, players, playerList, deckCards, midCards
+     */
     @Test
     fun testSwimConstructorSecond() {
+        val numberOfPasses = 2
+        val remainingTurns = 3
+        val lastRound = true
         val player1 = Player("Mary", mutableListOf())
         val player2 = Player("Peter", mutableListOf())
         val playerList = mutableListOf(player1, player2)
@@ -47,9 +62,9 @@ class SwimTest {
             Card(CardSuit.SPADES, CardValue.THREE)
         )
         val swim = Swim(
-            numberOfPasses = 2,
-            remainingTurns = 3,
-            lastRound = true,
+            numberOfPasses = numberOfPasses,
+            remainingTurns = remainingTurns,
+            lastRound = lastRound,
             actPlayer = player2,
             playerList = playerList,
             midCards = midCards,

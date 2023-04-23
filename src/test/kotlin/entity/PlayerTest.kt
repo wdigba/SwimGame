@@ -1,8 +1,14 @@
 package entity
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+/**
+This class contains unit tests for the [Player] class
+ */
 class PlayerTest {
-
+    /**
+     * Tests the constructor of the [Player] class.
+     * It checks if the suit and value parameters are correctly set when creating a new player with all three parameters
+     */
     @Test
     fun testPlayerConstructor() {
         val playerName = "Alice"
@@ -15,7 +21,10 @@ class PlayerTest {
         assertEquals(handCards, player.handCards)
         assertEquals(points, player.points)
     }
-
+    /**
+     * Tests the constructor of the [Player] class.
+     * It checks if the suit and value parameters are correctly set when creating a new player with two parameters
+     */
     @Test
     fun testPlayerConstructorForNoPoints() {
         val playerName = "Bob"
