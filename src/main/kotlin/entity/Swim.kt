@@ -10,12 +10,18 @@ package entity
  * @property deckCards the list of remaining cards in the deck, as [Card] objects
  * */
 
-data class Swim (var numberOfPasses : Int,
-            var remainingTurns : Int,
-            var lastRound: Boolean,
-            var actPlayer: Player,
-            var playerList: MutableList<Player>,
-            var midCards: MutableList<Card>,
-            var deckCards: MutableList<Card>
+data class Swim (
+    var numberOfPasses : Int,
+    var remainingTurns : Int,
+    var lastRound: Boolean,
+    var actPlayer: Player,
+    var playerList: MutableList<Player>,
+    var midCards: MutableList<Card>,
+    var deckCards: MutableList<Card>
     ){
+    init {
+        check(playerList.size in 2..4) {"Amount of players should be between 2 and 4"}
+        check (midCards.size == 3)  {"Amount of cards in the center of the table should be 3"}
+        check (deckCards.size in 0..32) {"Incorrect amount of cards in stack"}
+    }
 }

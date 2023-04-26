@@ -4,8 +4,9 @@ package entity
  * @property suit the suit of the card, as [CardSuit] object
  * @property value the value of the card, as [CardValue] object
  * */
-data class Card (val suit: CardSuit,
-                 val value: CardValue,
+data class Card (
+    val suit: CardSuit,
+    val value: CardValue,
     ){
     /**
      *@return string representation of the card, in the format "[suit] [value]"

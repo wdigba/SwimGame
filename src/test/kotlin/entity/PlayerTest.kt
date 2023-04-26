@@ -13,7 +13,7 @@ class PlayerTest {
     fun testPlayerConstructor() {
         val playerName = "Alice"
         val handCards = mutableListOf(Card(CardSuit.CLUBS, CardValue.TWO), Card(CardSuit.HEARTS, CardValue.EIGHT))
-        val points = 10.0
+        val points = 10.0f
 
         val player = Player(playerName, handCards, points)
 
