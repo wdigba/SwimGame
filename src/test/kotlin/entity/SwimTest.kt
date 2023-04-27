@@ -12,13 +12,24 @@ class SwimTest {
      */
     @Test
     fun testSwimConstructor() {
-        val player1 = Player("Alice", mutableListOf())
-        val player2 = Player("Bob", mutableListOf())
+        val handCardsAlice = mutableListOf(
+            Card(CardSuit.SPADES, CardValue.QUEEN),
+            Card(CardSuit.DIAMONDS, CardValue.JACK),
+            Card(CardSuit.SPADES, CardValue.ACE))
+        val handCardsBob = mutableListOf(
+            Card(CardSuit.HEARTS, CardValue.TEN),
+            Card(CardSuit.SPADES, CardValue.JACK),
+            Card(CardSuit.CLUBS, CardValue.QUEEN))
+        val player1 = Player("Alice", handCardsAlice)
+        val player2 = Player("Bob", handCardsBob)
         val playerList = mutableListOf(player1, player2)
-        val deckCards = mutableListOf(
+        val midCards = mutableListOf(
             Card(CardSuit.SPADES, CardValue.ACE),
             Card(CardSuit.HEARTS, CardValue.KING),
             Card(CardSuit.CLUBS, CardValue.QUEEN)
+        )
+        val deckCards = mutableListOf(
+            Card(CardSuit.CLUBS, CardValue.TEN)
         )
         val swim = Swim(
             numberOfPasses = 0,
@@ -26,7 +37,7 @@ class SwimTest {
             lastRound = false,
             actPlayer = player1,
             playerList = playerList,
-            midCards = mutableListOf(),
+            midCards = midCards,
             deckCards = deckCards
         )
 
@@ -35,7 +46,7 @@ class SwimTest {
         assertEquals(false, swim.lastRound)
         assertEquals(player1, swim.actPlayer)
         assertEquals(playerList, swim.playerList)
-        assertEquals(mutableListOf<Card>(), swim.midCards)
+        assertEquals(midCards, swim.midCards)
         assertEquals(deckCards, swim.deckCards)
     }
     /**
@@ -48,8 +59,16 @@ class SwimTest {
         val numberOfPasses = 2
         val remainingTurns = 3
         val lastRound = true
-        val player1 = Player("Mary", mutableListOf())
-        val player2 = Player("Peter", mutableListOf())
+        val handCardsMary = mutableListOf(
+            Card(CardSuit.DIAMONDS, CardValue.JACK),
+            Card(CardSuit.DIAMONDS, CardValue.ACE),
+            Card(CardSuit.SPADES, CardValue.KING))
+        val handCardsPeter = mutableListOf(
+            Card(CardSuit.CLUBS, CardValue.TEN),
+            Card(CardSuit.SPADES, CardValue.SEVEN),
+            Card(CardSuit.CLUBS, CardValue.SEVEN))
+        val player1 = Player("Mary", handCardsMary)
+        val player2 = Player("Peter", handCardsPeter)
         val playerList = mutableListOf(player1, player2)
         val deckCards = mutableListOf(
             Card(CardSuit.DIAMONDS, CardValue.SIX),

@@ -12,7 +12,10 @@ class PlayerTest {
     @Test
     fun testPlayerConstructor() {
         val playerName = "Alice"
-        val handCards = mutableListOf(Card(CardSuit.CLUBS, CardValue.TWO), Card(CardSuit.HEARTS, CardValue.EIGHT))
+        val handCards = mutableListOf(
+            Card(CardSuit.CLUBS, CardValue.KING),
+            Card(CardSuit.HEARTS, CardValue.EIGHT),
+            Card(CardSuit.CLUBS, CardValue.JACK))
         val points = 10.0f
 
         val player = Player(playerName, handCards, points)
@@ -28,7 +31,10 @@ class PlayerTest {
     @Test
     fun testPlayerConstructorForNoPoints() {
         val playerName = "Bob"
-        val handCards = mutableListOf(Card(CardSuit.SPADES, CardValue.QUEEN))
+        val handCards = mutableListOf(
+            Card(CardSuit.SPADES, CardValue.QUEEN),
+            Card(CardSuit.DIAMONDS, CardValue.JACK),
+            Card(CardSuit.SPADES, CardValue.ACE))
 
         val player = Player(playerName, handCards)
 
