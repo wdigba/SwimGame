@@ -125,5 +125,4 @@ class GameService (private val rootService: RootService) {
             else -> throw IllegalArgumentException("Cards in stack start from 7")
         }
     }
-
 }

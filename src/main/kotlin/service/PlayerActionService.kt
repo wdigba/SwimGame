@@ -98,5 +98,4 @@ class PlayerActionService (private val rootService: RootService) {
         game.numberOfPasses = 0
         rootService.currentGame = game
     }
-
 }

@@ -14,7 +14,6 @@ class RootService {
      * Current active game. Can be `null` if the game hasn't started yet.
      */
     var currentGame : Swim? = null
-
     /*
     /**
      * Adds the provided [newRefreshable] to all services connected
