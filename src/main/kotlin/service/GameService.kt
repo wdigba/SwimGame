@@ -16,7 +16,7 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
         check(rootService.currentGame == null) {"Game already exist"}
         check (players.size in 2..4) {"Amount of players is incorrect"}
         players.forEach { check(it.isNotEmpty()) { "Name should not be empty!" } }
-        allCards.shuffled()
+        allCards.shuffle()
         val playerList = players.map { //creates hand cards for each player
             name ->
             val cards = allCards.slice(0..2).toMutableList()
@@ -117,7 +117,7 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
         }
         val sortedPlayerScores = playerScores.toList().sortedByDescending { it.second } //sorted list of players based on score
         val winner = sortedPlayerScores.first()
-        println("The winner is ${winner.first.playerName} with ${winner.second} points.") //winner is the first player (with the biggest score)
+        println("The winner is ${winner.first.playerName} with ${winner.second} points") //winner is the first player (with the biggest score)
         for (playerScore in sortedPlayerScores.drop(1)) { //other players with their scores
             println("${playerScore.first.playerName} with ${playerScore.second} points")
         }
