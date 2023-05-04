@@ -8,23 +8,30 @@ import entity.*
 class GameService (private val rootService: RootService) {
     /**
      * Starts a new game with the given list of players and initializes the game's parameters.
-     * @property playerList the list of players who will participate in the game. Must have a size between 2 and 4.
+     * @property players the list of players who will participate in the game. Must have a size between 2 and 4.
      * @throws IllegalArgumentException if a game already exists
      * @throws IllegalArgumentException when the amount of players is incorrect
      */
-    fun startNewGame(playerList: MutableList<Player>) { //how to start game with no input parameters?
+    fun startNewGame(players: List<String>) { //how to start game with no input parameters?
         val allCards: MutableList<Card> = defaultRandomCardList() // create general stack
         check(rootService.currentGame == null) {"Game already exist"}
-        check (playerList.size in 2..4) {"Amount of players is incorrect"}
+        check (players.size in 2..4) {"Amount of players is incorrect"}
+        players.forEach { check(it.isNotEmpty()) { "Name should not be empty!" } }
         allCards.shuffled()
+        val playerList = players.map { //creates hand cards for each player
+            name ->
+            val cards = allCards.slice(0..2).toMutableList()
+            allCards.removeAll(cards)
+            Player(name, cards, 0.0f)
+        }.toMutableList()
         val game = Swim (
             numberOfPasses = 0,
             remainingTurns = 4,
             lastRound = false,
             actPlayer = playerList.first(),
             playerList = playerList,
-            midCards = allCards.subList(0,3),
-            deckCards = allCards.subList(4,32)
+            midCards = allCards.slice(0..2).toMutableList(), // middle cards get 3 top cards
+            deckCards = allCards.drop(3).toMutableList() //deck cards are all unused card of stack
         )
         rootService.currentGame = game
     }
@@ -65,11 +72,11 @@ class GameService (private val rootService: RootService) {
      * @throws IllegalArgumentException when we try to calculate winner, but game is still in the process
      * @throws IllegalArgumentException when player somehow has more than 3 cards in hand
      * @throws IllegalArgumentException when somehow player´s score could not be calculated
-     * @return name of winner and amount of points
+     * @return names of players and their scores in descending order
      * */
     fun calculateWinner() {
         val game = checkNotNull(rootService.currentGame) { "Current game does not exist" }
-        check (game.remainingTurns>0 && game.deckCards.isNotEmpty()) {"Game has not been finished yet"}
+        check (game.remainingTurns==0 || game.deckCards.isEmpty()) {"Game has not been finished yet"}
 
         val playerScores = mutableMapOf<Player, Float>() // create map of player and its score
         for (player in game.playerList) { // for every player
@@ -107,9 +114,12 @@ class GameService (private val rootService: RootService) {
             }
             playerScores[player] = score
         }
-        val winner = playerScores.maxByOrNull { it.value }!! //player with the biggest score
-        // if scores of players are the same, the winner is the first player in list of players
-        println("The winner is ${winner.key.playerName} with ${winner.value} points.")
+        val sortedPlayerScores = playerScores.toList().sortedByDescending { it.second } //sorted list of players based on score
+        val winner = sortedPlayerScores.first()
+        println("The winner is ${winner.first.playerName} with ${winner.second} points.") //winner is the first player (with the biggest score)
+        for (playerScore in sortedPlayerScores.drop(1)) { //other players with their scores
+            println("${playerScore.first.playerName} with ${playerScore.second} points")
+        }
     }
     /**
      * Receives points for each card based on the rules of the game

@@ -8,27 +8,29 @@ import entity.*
 class PlayerActionService (private val rootService: RootService) {
     /**
      * Allows player change one card in hand cards with another card in the middle of the table based on indices
-     * @property midCard
-     * @property playerCard
-     * THIS METHOD IS IN PROCESS! INDICES INSTEAD OF CARDS
+     * @property midCardIndex is an index of middle card that we want to change with one of player´s cards
+     * @property playerCardIndex is an index of player´s card that we want to change with one of middle cards
+     * @throws IllegalStateException when we can not find required card in the related stack
      * */
-    fun switchOneCard(midCard: Card, playerCard: Card){
+    fun switchOneCard(midCardIndex: Int, playerCardIndex: Int){
         val game = checkNotNull(rootService.currentGame) { "Current game does not exist" }
         val currentPlayer = game.actPlayer
         //checks if card exists in the tableCards or in the playerCards
-        if(midCard !in game.midCards || playerCard !in currentPlayer.handCards){
-            throw IllegalStateException("The specified card does not exist!")
-        }
-
-        val midCardIndex = game.midCards.indexOf(midCard)
-        val playerCardIndex = currentPlayer.handCards.indexOf(playerCard)
+        val midCard = game.midCards.getOrNull(midCardIndex) //check if cards exist
+            ?: throw IllegalStateException("The specified mid card does not exist!")
+        val playerCard = currentPlayer.handCards.getOrNull(playerCardIndex)
+            ?: throw IllegalStateException("The specified player card does not exist!")
 
         game.midCards[midCardIndex] = playerCard
         currentPlayer.handCards[playerCardIndex] = midCard
         //check for the last round and remaining turns to decide to continue or to finish the game
-        if (game.lastRound) {game.remainingTurns = game.remainingTurns-1}
-        if (game.lastRound && game.remainingTurns==0) {rootService.gameService.calculateWinner()}
-        else rootService.gameService.changeToNextPlayer()
+        if (game.lastRound) {
+            game.remainingTurns--
+            if (game.remainingTurns == 0) {
+                rootService.gameService.calculateWinner()
+            }
+        }
+        rootService.gameService.changeToNextPlayer()
     }
     /**
      * Allows player to change all player´s card with all cards in the middle of the table
@@ -45,9 +47,13 @@ class PlayerActionService (private val rootService: RootService) {
         game.midCards.clear()
         game.midCards.addAll(temporaryList)
         //check for the last round and remaining turns to decide to continue or to finish the game
-        if (game.lastRound) {game.remainingTurns = game.remainingTurns-1}
-        if (game.lastRound && game.remainingTurns==0) {rootService.gameService.calculateWinner()}
-        else rootService.gameService.changeToNextPlayer()
+        if (game.lastRound) {
+            game.remainingTurns--
+            if (game.remainingTurns == 0) {
+                rootService.gameService.calculateWinner()
+            }
+        }
+        rootService.gameService.changeToNextPlayer()
     }
     /**
      * Allows player to pass and wait for others
@@ -57,8 +63,12 @@ class PlayerActionService (private val rootService: RootService) {
         val game = checkNotNull(rootService.currentGame) { "Current game does not exist" }
         game.numberOfPasses++
         //check for the last round and remaining turns to decide to continue or to finish the game
-        if (game.lastRound) {game.remainingTurns = game.remainingTurns-1}
-        if (game.lastRound && game.remainingTurns==0) {rootService.gameService.calculateWinner()}
+        if (game.lastRound) {
+            game.remainingTurns--
+            if (game.remainingTurns == 0) {
+                rootService.gameService.calculateWinner()
+            }
+        }
         if(game.numberOfPasses < game.playerList.size) { //not everyone has passed yet
             rootService.gameService.changeToNextPlayer()
         }
@@ -90,7 +100,6 @@ class PlayerActionService (private val rootService: RootService) {
         if (game.deckCards.size < 3) {
             println("Not enough cards in deck to change mid cards")
             return
-            //refresh and show score board
         }
         game.midCards.clear()
         game.midCards = game.deckCards.take(3).toMutableList()
