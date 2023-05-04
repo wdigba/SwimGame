@@ -1,11 +1,10 @@
 package service
 import entity.*
-
 /**
  * PlayerActionService class describes possible actions of specific player and implements player´s mechanics, such as
  * "switch one card", "switch all cards", "knock" and "pass"
  */
-class PlayerActionService (private val rootService: RootService) {
+class PlayerActionService (private val rootService: RootService) : AbstractRefreshingService() {
     /**
      * Allows player change one card in hand cards with another card in the middle of the table based on indices
      * @property midCardIndex is an index of middle card that we want to change with one of player´s cards
@@ -30,6 +29,7 @@ class PlayerActionService (private val rootService: RootService) {
                 rootService.gameService.calculateWinner()
             }
         }
+        onAllRefreshables { refreshAfterSwitchOneCard() }
         rootService.gameService.changeToNextPlayer()
     }
     /**
@@ -53,6 +53,7 @@ class PlayerActionService (private val rootService: RootService) {
                 rootService.gameService.calculateWinner()
             }
         }
+        onAllRefreshables { refreshAfterSwitchAllCards() }
         rootService.gameService.changeToNextPlayer()
     }
     /**
@@ -73,6 +74,7 @@ class PlayerActionService (private val rootService: RootService) {
             rootService.gameService.changeToNextPlayer()
         }
         else changeMidCards() //everyone has passed so it´s time to change middle cards
+        onAllRefreshables { refreshAfterPass() }
     }
     /**
      * Allows player to knock
@@ -85,6 +87,7 @@ class PlayerActionService (private val rootService: RootService) {
         check (game.lastRound) { "Someone has already knocked, this is the last round" }
         game.remainingTurns = game.playerList.size - 1
         game.lastRound = true
+        onAllRefreshables { refreshAfterKnock() }
         rootService.gameService.changeToNextPlayer()
     }
     /** Extra method to change middle cards
@@ -99,7 +102,7 @@ class PlayerActionService (private val rootService: RootService) {
         }
         if (game.deckCards.size < 3) {
             println("Not enough cards in deck to change mid cards")
-            return
+            rootService.gameService.calculateWinner()
         }
         game.midCards.clear()
         game.midCards = game.deckCards.take(3).toMutableList()

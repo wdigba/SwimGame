@@ -1,11 +1,10 @@
 package service
 import entity.*
-
 /**
  * GameService class describes the game logic not related to specific player and implements the main game mechanics, such as
  * "start new game", "change to next player" and "calculate winner"
  */
-class GameService (private val rootService: RootService) {
+class GameService (private val rootService: RootService) : AbstractRefreshingService() {
     /**
      * Starts a new game with the given list of players and initializes the game's parameters.
      * @property players the list of players who will participate in the game. Must have a size between 2 and 4.
@@ -34,6 +33,7 @@ class GameService (private val rootService: RootService) {
             deckCards = allCards.drop(3).toMutableList() //deck cards are all unused card of stack
         )
         rootService.currentGame = game
+        onAllRefreshables { refreshAfterStartNewGame() }
     }
     /**
      * Generates a new list of 32 cards with random suits and values, using the CardSuit and CardValue enums.
@@ -59,6 +59,7 @@ class GameService (private val rootService: RootService) {
             val nextIndex = (currentIndex + 1) % players.size
             game.actPlayer = players[nextIndex]
             rootService.currentGame = game
+        onAllRefreshables { refreshAfterChangeToNextPerson() }
     }
     /**
      * Calculates the winner od Swim Game based on these rules:
@@ -120,6 +121,7 @@ class GameService (private val rootService: RootService) {
         for (playerScore in sortedPlayerScores.drop(1)) { //other players with their scores
             println("${playerScore.first.playerName} with ${playerScore.second} points")
         }
+        onAllRefreshables { refreshAfterCalculateWinner() }
     }
     /**
      * Receives points for each card based on the rules of the game
