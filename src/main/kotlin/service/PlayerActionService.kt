@@ -16,9 +16,9 @@ class PlayerActionService (private val rootService: RootService) : AbstractRefre
         val currentPlayer = game.actPlayer
         //checks if card exists in the tableCards or in the playerCards
         val midCard = game.midCards.getOrNull(midCardIndex) //check if cards exist
-            ?: throw IllegalStateException("The specified mid card does not exist!")
+            ?: throw IllegalStateException("The specified card does not exist!")
         val playerCard = currentPlayer.handCards.getOrNull(playerCardIndex)
-            ?: throw IllegalStateException("The specified player card does not exist!")
+            ?: throw IllegalStateException("The specified card does not exist!")
 
         game.midCards[midCardIndex] = playerCard
         currentPlayer.handCards[playerCardIndex] = midCard
@@ -68,6 +68,7 @@ class PlayerActionService (private val rootService: RootService) : AbstractRefre
             game.remainingTurns--
             if (game.remainingTurns == 0) {
                 rootService.gameService.calculateWinner()
+                return
             }
         }
         if(game.numberOfPasses < game.playerList.size) { //not everyone has passed yet
@@ -84,7 +85,7 @@ class PlayerActionService (private val rootService: RootService) : AbstractRefre
      * */
     fun knock () {
         val game = checkNotNull(rootService.currentGame) { "Current game does not exist" }
-        check (game.lastRound) { "Someone has already knocked, this is the last round" }
+        check (!game.lastRound) { "Someone has already knocked, this is the last round" }
         game.remainingTurns = game.playerList.size - 1
         game.lastRound = true
         onAllRefreshables { refreshAfterKnock() }
