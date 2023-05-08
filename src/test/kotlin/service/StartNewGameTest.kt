@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions.*
 
 /**
  * Class that provides tests for starting new game
+ * checks [GameService.startNewGame]
  * */
 class StartNewGameTest {
     /** general test to check existence and input

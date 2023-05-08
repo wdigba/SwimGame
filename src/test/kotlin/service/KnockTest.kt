@@ -3,6 +3,7 @@ package service
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 /** Test class to check if knock happens correctly
+ * checks [PlayerActionService.knock]
  * */
 class KnockTest {
     /** knocking without having a current game

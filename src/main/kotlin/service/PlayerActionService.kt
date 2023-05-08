@@ -19,7 +19,6 @@ class PlayerActionService (private val rootService: RootService) : AbstractRefre
             ?: throw IllegalStateException("The specified card does not exist!")
         val playerCard = currentPlayer.handCards.getOrNull(playerCardIndex)
             ?: throw IllegalStateException("The specified card does not exist!")
-
         game.midCards[midCardIndex] = playerCard
         currentPlayer.handCards[playerCardIndex] = midCard
         //check for the last round and remaining turns to decide to continue or to finish the game

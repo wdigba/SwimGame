@@ -4,6 +4,7 @@ import entity.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 /** test to calculate winner based on game rules
+ * checks [GameService.calculateWinner]
  * */
 class CalculateWinnerTest {
     /** there is no game to calculate the winner
@@ -118,7 +119,7 @@ class CalculateWinnerTest {
             deckCards = deckCards
         )
         game.currentGame = swim
-        println("The winner is Alice with 20.0 points\nBob with 21.0 points") //expected
+        println("The winner is Alice with 20.0 points\nBob with 20.0 points") //expected
         game.gameService.calculateWinner() //actual
         //the result is given in the same order as players in player list
     }

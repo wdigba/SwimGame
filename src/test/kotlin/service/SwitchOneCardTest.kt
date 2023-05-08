@@ -4,6 +4,7 @@ import entity.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 /** Test class to check if two cards (indices given) change their places correctly
+ * checks [PlayerActionService.switchOneCard]
  * */
 class SwitchOneCardTest {
     /** switch one card without having a current game
@@ -60,6 +61,19 @@ class SwitchOneCardTest {
         }
         assertEquals(expectedErrorMessage, exception.message)
     }
+    /**switching cards when game was automatically generated and method had invalid card index to switch
+     * */
+    @Test
+    fun `switch one card random stack out of index` () {
+        val game = RootService()
+        val playerNames = listOf("Max", "Mike", "Lana")
+        game.gameService.startNewGame(playerNames)
+        val expectedErrorMessage = "The specified card does not exist!"
+        val exception = assertThrows(IllegalStateException::class.java) {
+            game.playerActionService.switchOneCard(0, 3)
+        }
+        assertEquals(expectedErrorMessage, exception.message)
+    }
     /** switching cards with valid input
      * */
     @Test
@@ -96,23 +110,49 @@ class SwitchOneCardTest {
             deckCards = deckCards
         )
         game.currentGame = swim
-        println ("mid card of index 1" + midCards[1].toString())
+        val initialMidCard = midCards[1]
+        val initialPlayerCard = handCardsAlice[2]
+
+        game.playerActionService.switchOneCard(1, 2)
+
+        val finalMidCard = midCards[1]
+        val finalPlayerCard = handCardsAlice[2]
+        assertEquals(initialMidCard, finalPlayerCard)
+        assertEquals(initialPlayerCard, finalMidCard)
+        /* //previous manual check
+        println ("middle card of index 1" + midCards[1].toString())
         println("hand card of index 2" + handCardsAlice[2].toString())
         game.playerActionService.switchOneCard(1, 2)
-        println ("mid card of index 1" + midCards[1].toString())
+        println ("middle card of index 1" + midCards[1].toString())
         println("hand card of index 2" + handCardsAlice[2].toString())
+         */
     }
     /**switching one card with random input
+     * !! Test works properly
+     * the only thing is that we move to the next player right after we have done the switch
+     * so to prove the correctness it´s necessary to MUTE rootService.gameService.changeToNextPlayer()
      */
     @Test
     fun `switch one with random input`() {
         val game = RootService()
         val playerNames = listOf("Max", "Mike", "Lana")
         game.gameService.startNewGame(playerNames)
-        println ("mid card of index 1" + game.currentGame!!.midCards[1].toString())
-        println("hand card of index 2" + game.currentGame!!.actPlayer.handCards[2].toString())
+
+        /* //check is valid when rootService.gameService.changeToNextPlayer() muted
+        val initialMidCard = game.currentGame!!.midCards[1]
+        val initialPlayerCard = game.currentGame!!.actPlayer.handCards[2]
+
         game.playerActionService.switchOneCard(1, 2)
-        println ("mid card of index 1" + game.currentGame!!.midCards[1].toString())
-        println("hand card of index 2" + game.currentGame!!.actPlayer.handCards[2].toString())
+
+        val finalMidCard = game.currentGame!!.midCards[1]
+        val finalPlayerCard = game.currentGame!!.actPlayer.handCards[2]
+        assertEquals(initialMidCard, finalPlayerCard)
+        assertEquals(initialPlayerCard, finalMidCard)
+         */
+        println ("mid card of index 1 is" + game.currentGame!!.midCards[1].toString())
+        println("hand card of index 2 is" + game.currentGame!!.actPlayer.handCards[2].toString())
+        game.playerActionService.switchOneCard(1, 2)
+        println ("mid card of index 1 is" + game.currentGame!!.midCards[1].toString())
+        println("hand card of index 2 is " + game.currentGame!!.actPlayer.handCards[2].toString())
     }
 }

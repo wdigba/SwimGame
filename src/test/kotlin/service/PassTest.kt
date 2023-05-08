@@ -4,6 +4,7 @@ import entity.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 /** Test class to check if pass happens correctly
+ * checks [PlayerActionService.pass]
  * */
 class PassTest {
     /** passing without having a current game

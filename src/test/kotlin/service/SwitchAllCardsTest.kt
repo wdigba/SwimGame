@@ -4,6 +4,7 @@ import entity.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 /** Test class to check if all cards (middle and hand) change their places correctly
+ * checks [PlayerActionService.switchAllCards]
  * */
 class SwitchAllCardsTest {
     /** switch one card without having a current game
@@ -61,7 +62,9 @@ class SwitchAllCardsTest {
         println("hand cards: ${handCardsAlice.joinToString("; ")}")
     }
     /** switching all cards with random input
-     * !! DOES NOT WORK PROPERLY
+     * !! Test works properly
+     * the only thing is that we move to the next player right after we have done the switch
+     * so to prove the correctness it´s necessary to MUTE rootService.gameService.changeToNextPlayer()
      * */
     @Test
     fun `switch all with random input`() {

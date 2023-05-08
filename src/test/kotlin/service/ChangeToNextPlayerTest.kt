@@ -3,6 +3,7 @@ package service
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 /**Class to check correct order of changing players
+ * checks [GameService.changeToNextPlayer]
  * */
 class ChangeToNextPlayerTest {
     /**check that current player changes simultaneously and correctly with player of player list
