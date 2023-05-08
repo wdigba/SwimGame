@@ -33,5 +33,5 @@ interface Refreshable {
      * perform refreshes after player decided to change all cards with middle cards
      */
     fun refreshAfterSwitchAllCards() {}
-    fun refreshAfterGameEnd() {} //why do we need it? because after winner calculation game was over without any extra method
+    // fun refreshAfterGameEnd() {}
 }

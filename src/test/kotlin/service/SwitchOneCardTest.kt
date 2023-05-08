@@ -64,13 +64,26 @@ class SwitchOneCardTest {
     /**switching cards when game was automatically generated and method had invalid card index to switch
      * */
     @Test
-    fun `switch one card random stack out of index` () {
+    fun `switch one card random stack playerCard out of index` () {
         val game = RootService()
         val playerNames = listOf("Max", "Mike", "Lana")
         game.gameService.startNewGame(playerNames)
         val expectedErrorMessage = "The specified card does not exist!"
         val exception = assertThrows(IllegalStateException::class.java) {
             game.playerActionService.switchOneCard(0, 3)
+        }
+        assertEquals(expectedErrorMessage, exception.message)
+    }
+    /**switching cards when game was automatically generated and method had invalid other card index to switch
+     * */
+    @Test
+    fun `switch one card random stack midCard out of index` () {
+        val game = RootService()
+        val playerNames = listOf("Max", "Mike", "Lana")
+        game.gameService.startNewGame(playerNames)
+        val expectedErrorMessage = "The specified card does not exist!"
+        val exception = assertThrows(IllegalStateException::class.java) {
+            game.playerActionService.switchOneCard(5, 2)
         }
         assertEquals(expectedErrorMessage, exception.message)
     }
@@ -154,5 +167,17 @@ class SwitchOneCardTest {
         game.playerActionService.switchOneCard(1, 2)
         println ("mid card of index 1 is" + game.currentGame!!.midCards[1].toString())
         println("hand card of index 2 is " + game.currentGame!!.actPlayer.handCards[2].toString())
+    }
+    /** player decided to switch one card, but it was the last round
+     * [GameService.calculateWinner] expected
+     * */
+    @Test
+    fun `switch one with random input but it was the last round`() {
+        val game = RootService()
+        val playerNames = listOf("Max", "Mike", "Lana")
+        game.gameService.startNewGame(playerNames)
+        game.currentGame!!.lastRound = true
+        game.currentGame!!.remainingTurns = 1
+        game.playerActionService.switchOneCard(1, 2)
     }
 }

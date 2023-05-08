@@ -26,6 +26,7 @@ class PlayerActionService (private val rootService: RootService) : AbstractRefre
             game.remainingTurns--
             if (game.remainingTurns == 0) {
                 rootService.gameService.calculateWinner()
+                return
             }
         }
         onAllRefreshables { refreshAfterSwitchOneCard() }
@@ -50,6 +51,7 @@ class PlayerActionService (private val rootService: RootService) : AbstractRefre
             game.remainingTurns--
             if (game.remainingTurns == 0) {
                 rootService.gameService.calculateWinner()
+                return
             }
         }
         onAllRefreshables { refreshAfterSwitchAllCards() }
@@ -71,6 +73,7 @@ class PlayerActionService (private val rootService: RootService) : AbstractRefre
             }
         }
         if(game.numberOfPasses < game.playerList.size) { //not everyone has passed yet
+            println("Cannot change mid cards yet, ${game.playerList.size - game.numberOfPasses} pass(es) left")
             rootService.gameService.changeToNextPlayer()
         }
         else changeMidCards() //everyone has passed so it´s time to change middle cards
@@ -96,10 +99,11 @@ class PlayerActionService (private val rootService: RootService) : AbstractRefre
      * */
     private fun changeMidCards() {
         val game = checkNotNull(rootService.currentGame) { "Current game does not exist" }
+        /* //irrelevant, because we already prove it in pass()
         if (game.numberOfPasses < game.playerList.size) {
-            println("Cannot change mid cards yet, ${4 - game.numberOfPasses} pass(es) left")
+            println("Cannot change mid cards yet, ${game.playerList.size - game.numberOfPasses} pass(es) left")
             return
-        }
+        } */
         if (game.deckCards.size < 3) {
             println("Not enough cards in deck to change mid cards")
             rootService.gameService.calculateWinner()

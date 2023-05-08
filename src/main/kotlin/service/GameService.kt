@@ -65,7 +65,8 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
      * Calculates the winner od Swim Game based on these rules:
      * for each player we calculate points as biggest sum of one suit
      * if all 3 cards are different get card with the biggest value
-     * if 2 cards have the same suit get sum of their values (even smallest SEVEN+EIGHT of one suit are bigger than ACE of another)
+     * if 2 cards have the same suit get sum of their values
+     * (even smallest SEVEN+EIGHT of one suit are bigger than ACE of another)
      * if all 3 cards have the same suit get 30.5 as the score
      * player with the biggest amount of points wins
      * if there are more than one player with the same amount of points the first one of the playerList wins
@@ -90,13 +91,16 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
                         // nothing happens
                     }
                     1 -> {
-                        val cardValueScore = getCardValueScore(suitCards[0].value) // list consists of one card, we get the value for this suit
-                        if (cardValueScore > maxSameSuitCardsSum) { // saving value of the biggest card if all 3 cards are different
+                        // list consists of one card, we get the value for this suit
+                        val cardValueScore = getCardValueScore(suitCards[0].value)
+                        // saving value of the biggest card if all 3 cards are different
+                        if (cardValueScore > maxSameSuitCardsSum) {
                             maxSameSuitCardsSum = cardValueScore
                         }
                     }
                     2 -> { //player has 2 cards with the same suit
-                        val cardsSum = getCardValueScore(suitCards[0].value) + getCardValueScore(suitCards[1].value) //sum of cards with the same suit
+                        //sum of cards with the same suit
+                        val cardsSum = getCardValueScore(suitCards[0].value) + getCardValueScore(suitCards[1].value)
                         if (cardsSum > maxSameSuitCardsSum) { //check for maximum
                             maxSameSuitCardsSum = cardsSum
                         }
@@ -115,9 +119,11 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
             }
             playerScores[player] = score
         }
-        val sortedPlayerScores = playerScores.toList().sortedByDescending { it.second } //sorted list of players based on score
+        //sorted list of players based on score
+        val sortedPlayerScores = playerScores.toList().sortedByDescending { it.second }
         val winner = sortedPlayerScores.first()
-        println("The winner is ${winner.first.playerName} with ${winner.second} points") //winner is the first player (with the biggest score)
+        //winner is the first player (with the biggest score)
+        println("The winner is ${winner.first.playerName} with ${winner.second} points")
         for (playerScore in sortedPlayerScores.drop(1)) { //other players with their scores
             println("${playerScore.first.playerName} with ${playerScore.second} points")
         }

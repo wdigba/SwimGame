@@ -19,7 +19,8 @@ class ChangeToNextPlayerTest {
         game.gameService.changeToNextPlayer()
         assertEquals(game.currentGame!!.actPlayer, game.currentGame!!.playerList[2]) //change for second player
         game.gameService.changeToNextPlayer()
-        assertEquals(game.currentGame!!.actPlayer, game.currentGame!!.playerList.first()) //we change back for the first player in the list
+        assertEquals(game.currentGame!!.actPlayer, game.currentGame!!.playerList.first())
+        //we change back for the first player in the list
     }
 }
 

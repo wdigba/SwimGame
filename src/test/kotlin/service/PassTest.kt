@@ -20,7 +20,7 @@ class PassTest {
         Assertions.assertEquals(expectedErrorMessage, exception.message)
     }
     /** passing when it was last round and remaining turns 0
-     * calculateWinner expected
+     * [GameService.calculateWinner] expected
      * */
     @Test
     fun `pass when last round and remaning turns 0` () {
@@ -59,7 +59,7 @@ class PassTest {
         game.playerActionService.pass()
     }
     /** passing when it is not the last round, random generated
-     * changeToNextPlayer() expected
+     * [GameService.changeToNextPlayer] expected expected
      * */
     @Test
     fun `pass when not every one has passed random generated` () {
@@ -71,8 +71,7 @@ class PassTest {
         println("current player: ${game.currentGame!!.actPlayer.toString()}")
     }
     /** passing when everyone has already passed
-     * changeMidCards() expected
-     * !! DID NOT COMPLETELY COVER ALL TESTS OF CHANGE MID CARDS
+     * [PlayerActionService.changeMidCards] expected
      * */
     @Test
     fun `pass when everyone passed` () {
@@ -114,5 +113,17 @@ class PassTest {
         println("deck cards: ${game.currentGame!!.deckCards.joinToString("; ")}")
         game.playerActionService.pass()
         println("mid cards: ${game.currentGame!!.midCards.joinToString("; ")}")
+    }
+    /** every player has passed, but we ran out of available cards in deck
+     * [GameService.calculateWinner] expected
+     * */
+    @Test
+    fun `everyone passed but not enough cards in stack` () {
+        val game = RootService()
+        val playerNames = listOf("Max", "Mike", "Lana")
+        game.gameService.startNewGame(playerNames)
+        game.currentGame!!.numberOfPasses = game.currentGame!!.playerList.size
+        game.currentGame!!.deckCards.clear()
+        game.playerActionService.pass()
     }
 }

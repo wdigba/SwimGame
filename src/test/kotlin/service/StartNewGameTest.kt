@@ -20,9 +20,11 @@ class StartNewGameTest {
         assertTrue(game.currentGame == null) //game before start
         game.gameService.startNewGame(playerNames) //game created
         assertTrue(game.currentGame != null) //game exists
-        assertFailsWith<IllegalStateException> { game.gameService.startNewGame(playerNames) } //start new game but game exists
+        //start new game but game exists
+        assertFailsWith<IllegalStateException> { game.gameService.startNewGame(playerNames) }
         game.currentGame = null
-        assertFailsWith<IllegalStateException> { game.gameService.startNewGame(invalidPlayerAmount) } //start new game with invalid amount of players
+        //start new game with invalid amount of players
+        assertFailsWith<IllegalStateException> { game.gameService.startNewGame(invalidPlayerAmount) }
     }
     /** test with correct input
      * */
@@ -38,7 +40,8 @@ class StartNewGameTest {
         assertEquals(false, game.currentGame!!.lastRound)
         assertEquals("Alice", game.currentGame!!.actPlayer.playerName)
         assertEquals(3, game.currentGame!!.midCards.size)
-        assertEquals(20, game.currentGame!!.deckCards.size) // we create 32 cards in stack, 3*3 goes to players, 3 goes to middle
+        // we create 32 cards in stack, 3*3 goes to players, 3 goes to middle
+        assertEquals(20, game.currentGame!!.deckCards.size)
         //=> 32-9-3 = 20 cards left for deck
     }
     /** test with not enough players

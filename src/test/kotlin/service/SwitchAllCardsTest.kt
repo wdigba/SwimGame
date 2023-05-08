@@ -77,4 +77,16 @@ class SwitchAllCardsTest {
         println("mid cards: ${game.currentGame!!.midCards.joinToString("; ")}")
         println("hand cards: ${game.currentGame!!.actPlayer.handCards.joinToString("; ")}")
     }
+    /** player decided to switch all cards, but it was the last round
+     * [GameService.calculateWinner] expected
+     * */
+    @Test
+    fun `switch all with random input but it was the last round`() {
+        val game = RootService()
+        val playerNames = listOf("Max", "Mike", "Lana")
+        game.gameService.startNewGame(playerNames)
+        game.currentGame!!.lastRound = true
+        game.currentGame!!.remainingTurns = 1
+        game.playerActionService.switchAllCards()
+    }
 }
