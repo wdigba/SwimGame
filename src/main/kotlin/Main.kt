@@ -1,6 +1,8 @@
-import view.SopraApplication
-
+import view.SwimApplication
+/**
+ * main function that starts the [SwimApplication]
+ */
 fun main() {
-    SopraApplication().show()
+    SwimApplication().show()
     println("Application ended. Goodbye")
 }

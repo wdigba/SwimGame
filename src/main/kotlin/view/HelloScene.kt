@@ -12,12 +12,12 @@ class HelloScene : BoardGameScene(500, 500) {
         height = 500,
         posX = 0,
         posY = 0,
-        text = "Hello, SoPra!",
-        font = Font(size = 20)
+        text = "Hi beauty!",
+        font = Font(size = 50)
     )
 
     init {
-        background = ColorVisual(108, 168, 59)
+        background = ColorVisual(121, 50, 168)
         addComponents(helloLabel)
     }
 
