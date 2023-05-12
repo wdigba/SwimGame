@@ -39,7 +39,17 @@ class SwimApplication : BoardGameApplication("Swim Game"), Refreshable {
     }
 
    init {
-        this.showMenuScene(newGameMenuScene)
+       this.showMenuScene(newGameMenuScene)
+       this.showGameScene(gameScene)
+       rootService.addRefreshables(
+           this,
+           newGameMenuScene,
+           gameScene,
+           //endMenuScene
+       )
+    }
+    override fun refreshAfterStartNewGame() {
+        this.hideMenuScene()
     }
 
 }
