@@ -33,5 +33,4 @@ interface Refreshable {
      * perform refreshes after player decided to change all cards with middle cards
      */
     fun refreshAfterSwitchAllCards() {}
-    // fun refreshAfterGameEnd() {}
 }

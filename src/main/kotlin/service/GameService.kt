@@ -118,6 +118,7 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
                 throw IllegalArgumentException ("Score for player $player could not be calculated")
             }
             playerScores[player] = score
+            player.points = score
         }
         //sorted list of players based on score
         val sortedPlayerScores = playerScores.toList().sortedByDescending { it.second }

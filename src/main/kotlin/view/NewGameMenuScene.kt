@@ -156,7 +156,7 @@ class NewGameMenuScene (private val rootService: RootService) :
      * default structure with two players
      * */
     init {
-        background = ColorVisual(109, 199, 97)
+        background = ColorVisual(2, 74, 5)
         addComponents(
             player1Label,
             player2Label,

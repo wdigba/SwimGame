@@ -13,7 +13,6 @@ import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.util.Font
 import java.awt.Color
-import tools.aqua.bgw.util.Stack
 
 class SwimGameScene(private val rootService: RootService):
     BoardGameScene(1920, 1080), Refreshable {
@@ -23,6 +22,9 @@ class SwimGameScene(private val rootService: RootService):
 
     private var nameLabels = mutableListOf<Label>()
 
+    private var playerCardIndex = 0
+
+    private var midCardIndex = 0
 
     private var currentPlayerHandLayout: LinearLayout<CardView> = LinearLayout(
         height = 220,
@@ -92,7 +94,7 @@ class SwimGameScene(private val rootService: RootService):
         font = Font(fontWeight = Font.FontWeight.LIGHT, size = 30)
     )
 
-    private var tableCardsLayout: LinearLayout<CardView> = LinearLayout(
+    private var midCardsLayout: LinearLayout<CardView> = LinearLayout(
         height = 220,
         width = 600,
         posX = 550,
@@ -106,8 +108,7 @@ class SwimGameScene(private val rootService: RootService):
         width = 150,
         posX = 1200,
         posY = 425,
-        alignment = Alignment.CENTER,
-        visual = ColorVisual(255, 255, 255, 50)
+        alignment = Alignment.CENTER
     )
 
     //action buttons
@@ -125,6 +126,114 @@ class SwimGameScene(private val rootService: RootService):
         }
     }
 
+    private val switchOneButton = Button(
+        height = 60,
+        width = 200,
+        posX = 260,
+        posY = 900,
+        text = "switch one",
+        font = Font(color = Color.BLACK, fontWeight = Font.FontWeight.LIGHT, size = 25)
+    ).apply {
+        onMouseClicked = {
+            removeComponents(this, knockButton, switchAllButton, passButton)
+            actionPersonLabel.text = "click on your card"
+            addComponents(switchHandCardButton1, switchHandCardButton2, switchHandCardButton3)
+        }
+    }
+
+    private val switchHandCardButton1 = Button(
+        height = 50,
+        width = 120,
+        posX = 720,
+        posY = 1025,
+        text = "Pick",
+        font = Font(color = Color.BLACK, fontWeight = Font.FontWeight.BOLD, size = 25)
+    ).apply {
+        onMouseClicked = {
+            removeHandSwapButtons(0)
+        }
+    }
+
+    private val switchHandCardButton2 = Button(
+        height = 50,
+        width = 120,
+        posX = 890,
+        posY = 1025,
+        text = "Pick",
+        font = Font(color = Color.BLACK, fontWeight = Font.FontWeight.BOLD, size = 25)
+    ).apply {
+        onMouseClicked = {
+            removeHandSwapButtons(1)
+        }
+    }
+
+    private val switchHandCardButton3 = Button(
+        height = 50,
+        width = 120,
+        posX = 1060,
+        posY = 1025,
+        text = "Pick",
+        font = Font(color = Color.BLACK, fontWeight = Font.FontWeight.BOLD, size = 25)
+    ).apply {
+        onMouseClicked = {
+            removeHandSwapButtons(2)
+        }
+    }
+
+    private fun removeHandSwapButtons( switchCard: Int ){
+        playerCardIndex = switchCard
+        removeComponents(switchHandCardButton1, switchHandCardButton2, switchHandCardButton3)
+        actionPersonLabel.text = "choose card from middle"
+        addComponents(switchMidCardButton1, switchMidCardButton2, switchMidCardButton3)
+    }
+
+    private val switchMidCardButton1 = Button(
+        height = 50,
+        width = 120,
+        posX = 620,
+        posY = 650,
+        text = "Pick",
+        font = Font(color = Color.BLACK, fontWeight = Font.FontWeight.BOLD, size = 25)
+    ).apply {
+        onMouseClicked = {
+            removeTableSwapButtons( 0 )
+        }
+    }
+
+    private val switchMidCardButton2 = Button(
+        height = 50,
+        width = 120,
+        posX = 790,
+        posY = 650,
+        text = "Pick",
+        font = Font(color = Color.BLACK, fontWeight = Font.FontWeight.BOLD, size = 25)
+    ).apply {
+        onMouseClicked = {
+            removeTableSwapButtons( 1 )
+        }
+    }
+
+    private val switchMidCardButton3 = Button(
+        height = 50,
+        width = 120,
+        posX = 960,
+        posY = 650,
+        text = "Pick",
+        font = Font(color = Color.BLACK, fontWeight = Font.FontWeight.BOLD, size = 25)
+    ).apply {
+        onMouseClicked = {
+            removeTableSwapButtons( 2 )
+        }
+    }
+
+    private fun removeTableSwapButtons( switchCard: Int ){
+        midCardIndex = switchCard
+        removeComponents(switchMidCardButton1, switchMidCardButton2, switchMidCardButton3)
+        actionPersonLabel.text = ""
+        addComponents(knockButton, switchAllButton, passButton, switchOneButton)
+        rootService.playerActionService.switchOneCard(midCardIndex, playerCardIndex)
+    }
+
     private val knockButton = Button(
         height = 60,
         width = 200,
@@ -134,14 +243,11 @@ class SwimGameScene(private val rootService: RootService):
         font = Font(color = Color.BLACK, fontWeight = Font.FontWeight.LIGHT, size = 25)
     ).apply {
         onMouseClicked = {
-            val game = rootService.currentGame
-            checkNotNull(game) {"no started game"}
-            knockedPersonLabel.text = "${game.actPlayer.playerName} has knocked"
             rootService.playerActionService.knock()
         }
     }
 
-    private val knockedPersonLabel = Label(
+    private val actionPersonLabel = Label(
         height = 60,
         width = 500,
         posX = 1300,
@@ -184,14 +290,14 @@ class SwimGameScene(private val rootService: RootService):
         }
     }
 
-    private fun createStack(stack: Stack<Card>, tableStack: CardStack<CardView>){
-        for (i in stack.peekAll().indices){
+    private fun createStack(stack: MutableList<Card>, tableStack: CardStack<CardView>){
+        for (i in stack.indices){
             val cardImageLoader = CardImageLoader()
             val currentCard = CardView(
                 height = 200,
                 width = 120,
                 front = ImageVisual(cardImageLoader.frontImageFor(
-                    stack.peekAll()[i].suit, stack.peekAll()[i].value)),
+                    stack[i].suit, stack[i].value)),
                 back = ImageVisual(cardImageLoader.backImage)
             )
             tableStack.add(currentCard)
@@ -199,11 +305,11 @@ class SwimGameScene(private val rootService: RootService):
     }
 
     private fun clearMap(){
-        val components = arrayOf(tableCardsLayout, cardStackLayout, currentPlayerHandLayout,
+        val components = arrayOf(midCardsLayout, cardStackLayout, currentPlayerHandLayout,
             topPlayerHandLayout, leftPlayerHandLayout, rightPlayerHandLayout,
             currentPlayerLabel, topPlayerLabel, leftPlayerLabel, rightPlayerLabel,
-            cardStackCountLabel, knockedPersonLabel)
-        val layouts = arrayOf(tableCardsLayout, cardStackLayout, currentPlayerHandLayout,
+            cardStackCountLabel, actionPersonLabel)
+        val layouts = arrayOf(midCardsLayout, cardStackLayout, currentPlayerHandLayout,
             topPlayerHandLayout, leftPlayerHandLayout, rightPlayerHandLayout)
         for ( i in layouts ){
             i.clear()
@@ -211,7 +317,7 @@ class SwimGameScene(private val rootService: RootService):
         for ( i in components ){
             removeComponents(i)
         }
-        knockedPersonLabel.text = ""
+        actionPersonLabel.text = ""
     }
 
     private fun changeCurrentPlayer(
@@ -236,8 +342,8 @@ class SwimGameScene(private val rootService: RootService):
     init {
         leftPlayerHandLayout.rotate(90)
         rightPlayerHandLayout.rotate(-90)
-        background = ColorVisual(109, 199, 97)
-        addComponents(switchAllButton, knockButton, passButton)
+        background = ColorVisual(2, 74, 5)
+        addComponents(switchAllButton, switchOneButton, knockButton, passButton)
     }
 
     override fun refreshAfterStartNewGame() {
@@ -247,7 +353,7 @@ class SwimGameScene(private val rootService: RootService):
 
         clearMap()
 
-        addComponents(tableCardsLayout, cardStackLayout, knockedPersonLabel)
+        addComponents(midCardsLayout, cardStackLayout, actionPersonLabel)
 
         val playerNames = game.playerList
 
@@ -267,8 +373,8 @@ class SwimGameScene(private val rootService: RootService):
                     insertCards(game.playerList[i].handCards, layouts[i])
                 }
                 currentPlayerHandLayout.forEach { CardView -> CardView.showFront() }
-                insertCards(game.midCards, tableCardsLayout)
-                tableCardsLayout.forEach { CardView -> CardView.showFront() }
+                insertCards(game.midCards, midCardsLayout)
+                midCardsLayout.forEach { CardView -> CardView.showFront() }
             }
 
             3 -> {
@@ -283,8 +389,8 @@ class SwimGameScene(private val rootService: RootService):
                     insertCards(game.playerList[i].handCards, layouts[i])
                 }
                 currentPlayerHandLayout.forEach { CardView -> CardView.showFront() }
-                insertCards(game.midCards, tableCardsLayout)
-                tableCardsLayout.forEach { CardView -> CardView.showFront() }
+                insertCards(game.midCards, midCardsLayout)
+                midCardsLayout.forEach { CardView -> CardView.showFront() }
             }
             else -> {
                 layouts = mutableListOf(currentPlayerHandLayout, topPlayerHandLayout)
@@ -295,12 +401,12 @@ class SwimGameScene(private val rootService: RootService):
                     insertCards(game.playerList[i].handCards, layouts[i])
                 }
                 currentPlayerHandLayout.forEach { CardView -> CardView.showFront() }
-                insertCards(game.midCards, tableCardsLayout)
-                tableCardsLayout.forEach { CardView -> CardView.showFront() }
+                insertCards(game.midCards, midCardsLayout)
+                midCardsLayout.forEach { CardView -> CardView.showFront() }
             }
         }
-        //createStack(game.deckCards.toStack(), cardStackLayout)
-        //cardStackCountLabel.text = "${rootService.currentGame?.cardStack?.size} cards left"
+        createStack(game.deckCards, cardStackLayout)
+        cardStackCountLabel.text = "${rootService.currentGame?.deckCards?.size} cards left"
         addComponents(cardStackCountLabel)
     }
 
@@ -308,7 +414,7 @@ class SwimGameScene(private val rootService: RootService):
         val game = rootService.currentGame
         checkNotNull(game) {"no started game"}
 
-        val delay = DelayAnimation(1000)
+        val delay = DelayAnimation(2000)
         delay.onFinished = {
             changeCurrentPlayer(layouts, nameLabels)
             unlock()
@@ -321,9 +427,9 @@ class SwimGameScene(private val rootService: RootService):
         val game = rootService.currentGame
         checkNotNull(game) {"no started game"}
 
-        tableCardsLayout.clear()
-        insertCards(game.midCards, tableCardsLayout)
-        tableCardsLayout.forEach { CardView -> CardView.showFront() }
+        midCardsLayout.clear()
+        insertCards(game.midCards, midCardsLayout)
+        midCardsLayout.forEach { CardView -> CardView.showFront() }
 
         currentPlayerHandLayout.clear()
         insertCards(game.actPlayer.handCards, layouts[0])
@@ -334,12 +440,32 @@ class SwimGameScene(private val rootService: RootService):
         val game = rootService.currentGame
         checkNotNull(game) {"no started game"}
 
-        tableCardsLayout.clear()
-        insertCards(game.midCards, tableCardsLayout)
-        tableCardsLayout.forEach { CardView -> CardView.showFront() }
+        midCardsLayout.clear()
+        insertCards(game.midCards, midCardsLayout)
+        midCardsLayout.forEach { CardView -> CardView.showFront() }
 
-        //createStack(game.cardStack, cardStackLayout)
-        //cardStackCountLabel.text = "${rootService.currentGame?.cardStack?.size} cards left"
+        createStack(game.deckCards, cardStackLayout)
+        cardStackCountLabel.text = "${rootService.currentGame?.deckCards?.size} cards left"
+    }
+
+    override fun refreshAfterSwitchOneCard() {
+
+        val game = rootService.currentGame
+        checkNotNull(game) {"no started game"}
+
+        midCardsLayout.clear()
+        insertCards(game.midCards, midCardsLayout)
+        midCardsLayout.forEach { CardView -> CardView.showFront() }
+
+        currentPlayerHandLayout.clear()
+        insertCards(game.actPlayer.handCards, layouts[0])
+        currentPlayerHandLayout.forEach { CardView -> CardView.showFront() }
+    }
+
+    override fun refreshAfterKnock() {
+        val game = rootService.currentGame
+        checkNotNull(game) {"no started game"}
+        actionPersonLabel.text = "${game.actPlayer.playerName} has knocked"
     }
 
 }

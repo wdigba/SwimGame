@@ -76,7 +76,10 @@ class PlayerActionService (private val rootService: RootService) : AbstractRefre
             println("Cannot change mid cards yet, ${game.playerList.size - game.numberOfPasses} pass(es) left")
             rootService.gameService.changeToNextPlayer()
         }
-        else changeMidCards() //everyone has passed so it´s time to change middle cards
+        else {
+            changeMidCards()
+            rootService.gameService.changeToNextPlayer()
+        } //everyone has passed so it´s time to change middle cards
         onAllRefreshables { refreshAfterPass() }
     }
     /**
