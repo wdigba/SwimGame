@@ -7,7 +7,6 @@ import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.core.Alignment
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
-import tools.aqua.bgw.visual.ImageVisual
 import java.awt.Color
 class GameFinishedMenuScene (private val rootService: RootService):
     MenuScene(1000,1000), Refreshable{
@@ -63,18 +62,14 @@ class GameFinishedMenuScene (private val rootService: RootService):
         font = Font(color = Color.WHITE, fontWeight = Font.FontWeight.BOLD, size = 30)
     )
 
-    private val newGameButton = Button(
+    val newGameButton = Button(
         width = 350,
         height = 80,
         posX = 125,
         posY = 800,
         text = "NEW GAME",
         font = Font(color = Color.BLACK, fontWeight = Font.FontWeight.BOLD, size = 36)
-    ).apply {
-        onMouseClicked = {
-            //rootService.gameService
-        }
-    }
+    )
 
     val exitButton = Button(
         width = 350,
@@ -100,39 +95,31 @@ class GameFinishedMenuScene (private val rootService: RootService):
         checkNotNull(game) {"No started game found."}
 
         val playerLabels = listOf(player1Points, player2Points, player3Points, player4Points)
-        val playerPoints = mutableListOf<Float>()
-        var maxPoints = 0.0f
-        var winnerIndex = 0
 
-        for( i in 0 until game.playerList.size ){
-            playerPoints.add(game.playerList[i].points)
-            if(game.playerList[i].points > maxPoints){
-                maxPoints = game.playerList[i].points
-                winnerIndex = i
-            }
-        }
-        playerWinLabel.text = "${game.playerList[winnerIndex].playerName.uppercase()} WON!"
+        val sortedPlayers = game.playerList.sortedByDescending { it.points }
+
+        playerWinLabel.text = "${sortedPlayers[0].playerName.uppercase()} WON!"
         addComponents(playerWinLabel, finalResult)
 
         when( game.playerList.size ){
             4 -> {
                 for( i in 0 until 4 ){
-                    playerLabels[i].text = "Player${i+1} ................." +
-                            "...................................................... ${game.playerList[i].points}"
+                    playerLabels[i].text = "Player ${sortedPlayers[i].playerName}:  " +
+                            "${sortedPlayers[i].points} points"
                     addComponents(playerLabels[i])
                 }
             }
             3 -> {
                 for( i in 0 until 3 ){
-                    playerLabels[i].text = "Player${i+1} ................." +
-                            "...................................................... ${game.playerList[i].points}"
+                    playerLabels[i].text = "Player ${sortedPlayers[i].playerName}:  " +
+                            "${sortedPlayers[i].points} points"
                     addComponents(playerLabels[i])
                 }
             }
             else -> {
                 for( i in 0 until 2 ){
-                    playerLabels[i].text = "Player${i+1} ................." +
-                            "...................................................... ${game.playerList[i].points}"
+                    playerLabels[i].text = "Player ${sortedPlayers[i].playerName}:  " +
+                            "${sortedPlayers[i].points} points"
                     addComponents(playerLabels[i])
                 }
             }

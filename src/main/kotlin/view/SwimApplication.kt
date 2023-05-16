@@ -42,7 +42,11 @@ class SwimApplication : BoardGameApplication("Swim Game"), Refreshable {
         exitButton.onMouseClicked = {
             exit()
         }
+        newGameButton.onMouseClicked = {
+
+        }
     }
+
 
    init {
        this.showMenuScene(newGameMenuScene)

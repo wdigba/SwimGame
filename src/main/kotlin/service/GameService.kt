@@ -13,17 +13,17 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
      */
     fun startNewGame(players: List<String>) { //how to start game with no input parameters?
         val allCards: MutableList<Card> = defaultRandomCardList() // create general stack
-        check(rootService.currentGame == null) {"Game already exist"}
-        check (players.size in 2..4) {"Amount of players is incorrect"}
+        check(rootService.currentGame == null) { "Game already exist" }
+        check(players.size in 2..4) { "Amount of players is incorrect" }
         players.forEach { check(it.isNotEmpty()) { "Name should not be empty!" } }
         allCards.shuffle()
         val playerList = players.map { //creates hand cards for each player
-            name ->
+                name ->
             val cards = allCards.slice(0..2).toMutableList()
             allCards.removeAll(cards)
             Player(name, cards, 0.0f)
         }.toMutableList()
-        val game = Swim (
+        val game = Swim(
             numberOfPasses = 0,
             remainingTurns = 4,
             lastRound = false,
@@ -35,6 +35,7 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
         rootService.currentGame = game
         onAllRefreshables { refreshAfterStartNewGame() }
     }
+
     /**
      * Generates a new list of 32 cards with random suits and values, using the CardSuit and CardValue enums.
      * The generated list is mutable, so the cards can be shuffled or modified.
@@ -46,6 +47,7 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
             CardValue.values()[(index % 8) + 5] // values of cards are only from SEVEN to ACE
         )
     }
+
     /**
      * Changes the active player to the next player in the player list of the current game.
      * @throws IllegalArgumentException when game does not exist
@@ -53,14 +55,15 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
      */
     fun changeToNextPlayer() {
         val game = checkNotNull(rootService.currentGame) { "Current game does not exist" }
-        check(game.remainingTurns>0) {"Game was over"}
-            val players = game.playerList
-            val currentIndex = players.indexOf(game.actPlayer)
-            val nextIndex = (currentIndex + 1) % players.size
-            game.actPlayer = players[nextIndex]
-            rootService.currentGame = game
+        check(game.remainingTurns > 0) { "Game was over" }
+        val players = game.playerList
+        val currentIndex = players.indexOf(game.actPlayer)
+        val nextIndex = (currentIndex + 1) % players.size
+        game.actPlayer = players[nextIndex]
+        rootService.currentGame = game
         onAllRefreshables { refreshAfterChangeToNextPerson() }
     }
+
     /**
      * Calculates the winner od Swim Game based on these rules:
      * for each player we calculate points as biggest sum of one suit
@@ -78,11 +81,11 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
      * */
     fun calculateWinner() {
         val game = checkNotNull(rootService.currentGame) { "Current game does not exist" }
-        check (game.remainingTurns==0 || game.deckCards.isEmpty()) {"Game has not been finished yet"}
+        check(game.remainingTurns == 0 || game.deckCards.isEmpty()) { "Game has not been finished yet" }
 
         val playerScores = mutableMapOf<Player, Float>() // create map of player and its score
         for (player in game.playerList) { // for every player
-            var score : Float // variable to save score for every player
+            var score: Float // variable to save score for every player
             var maxSameSuitCardsSum = 0.0f // variable to save maximum score for every single suit
             for (suit in CardSuit.values()) { //check through every existing suit
                 val suitCards = player.handCards.filter { it.suit == suit } // list of cards with the same suit
@@ -90,6 +93,7 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
                     0 -> {
                         // nothing happens
                     }
+
                     1 -> {
                         // list consists of one card, we get the value for this suit
                         val cardValueScore = getCardValueScore(suitCards[0].value)
@@ -98,6 +102,7 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
                             maxSameSuitCardsSum = cardValueScore
                         }
                     }
+
                     2 -> { //player has 2 cards with the same suit
                         //sum of cards with the same suit
                         val cardsSum = getCardValueScore(suitCards[0].value) + getCardValueScore(suitCards[1].value)
@@ -105,17 +110,19 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
                             maxSameSuitCardsSum = cardsSum
                         }
                     }
+
                     3 -> { //if player has 3 cards the same suit
                         maxSameSuitCardsSum = 30.5f
                         break
                     }
+
                     else -> throw IllegalArgumentException("CardSuit $suit has more than 3 cards")
                 }
             }
             score = if (maxSameSuitCardsSum > 0) { // score of player is the biggest sum of the same suit
                 maxSameSuitCardsSum
             } else {
-                throw IllegalArgumentException ("Score for player $player could not be calculated")
+                throw IllegalArgumentException("Score for player $player could not be calculated")
             }
             playerScores[player] = score
             player.points = score
@@ -130,6 +137,7 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
         }
         onAllRefreshables { refreshAfterCalculateWinner() }
     }
+
     /**
      * Receives points for each card based on the rules of the game
      * @throws IllegalArgumentException when cards in stack have value <7
