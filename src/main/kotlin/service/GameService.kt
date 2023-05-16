@@ -21,7 +21,7 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
                 name ->
             val cards = allCards.slice(0..2).toMutableList()
             allCards.removeAll(cards)
-            Player(name, cards, 0.0f)
+            Player(name, cards)
         }.toMutableList()
         val game = Swim(
             numberOfPasses = 0,

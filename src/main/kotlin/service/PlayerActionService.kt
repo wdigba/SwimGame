@@ -5,6 +5,12 @@ import entity.*
  * "switch one card", "switch all cards", "knock" and "pass"
  */
 class PlayerActionService (private val rootService: RootService) : AbstractRefreshingService() {
+    fun revealCards() {
+        val game = checkNotNull(rootService.currentGame) { "Current game does not exist" }
+        val currentPlayer = game.actPlayer
+        currentPlayer.cardsRevealed = true
+    }
+
     /**
      * Allows player change one card in hand cards with another card in the middle of the table based on indices
      * @property midCardIndex is an index of middle card that we want to change with one of player´s cards

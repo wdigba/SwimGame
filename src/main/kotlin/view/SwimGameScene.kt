@@ -267,6 +267,23 @@ class SwimGameScene(private val rootService: RootService):
         }
     }
 
+    private val revealCards = Button (
+        height = 70,
+        width = 250,
+        posX = 100,
+        posY = 850,
+        text = "reveal cards",
+        font = Font(color = Color.BLACK, fontWeight = Font.FontWeight.LIGHT, size = 28)
+    ).apply {
+        onMouseClicked = {
+            rootService.playerActionService.revealCards()
+            currentPlayerHandLayout.forEach { it.showFront() }
+            addComponents(switchAllButton, switchOneButton, knockButton, passButton)
+            removeComponents(this)
+        }
+    }
+
+
     //label for the amount of cards in the stack left
     private val cardStackCountLabel = Label(
         height = 60,
@@ -335,14 +352,20 @@ class SwimGameScene(private val rootService: RootService):
             nameLabels[i].text = tempNameList[(i+1) % layouts.size]
             layouts[i].forEach{ CardView -> CardView.showBack() }
         }
-        currentPlayerHandLayout.forEach{ CardView -> CardView.showFront() }
+        if (rootService.currentGame?.actPlayer?.cardsRevealed!!) {
+            currentPlayerHandLayout.forEach{ CardView -> CardView.showFront() }
+            return
+        }
+        addComponents(revealCards)
+        removeComponents(switchAllButton, switchOneButton, knockButton, passButton)
+        currentPlayerHandLayout.forEach{ CardView -> CardView.showBack() }
     }
 
     init {
         leftPlayerHandLayout.rotate(90)
         rightPlayerHandLayout.rotate(-90)
         background = ColorVisual(2, 74, 5)
-        addComponents(switchAllButton, switchOneButton, knockButton, passButton)
+        addComponents(revealCards)
     }
 
     override fun refreshAfterStartNewGame() {
@@ -371,7 +394,7 @@ class SwimGameScene(private val rootService: RootService):
                     addComponents(layouts[i], nameLabels[i])
                     insertCards(game.playerList[i].handCards, layouts[i])
                 }
-                currentPlayerHandLayout.forEach { CardView -> CardView.showFront() }
+                currentPlayerHandLayout.forEach { CardView -> CardView.showBack() }
                 insertCards(game.midCards, midCardsLayout)
                 midCardsLayout.forEach { CardView -> CardView.showFront() }
             }
@@ -387,7 +410,7 @@ class SwimGameScene(private val rootService: RootService):
                     addComponents(layouts[i], nameLabels[i])
                     insertCards(game.playerList[i].handCards, layouts[i])
                 }
-                currentPlayerHandLayout.forEach { CardView -> CardView.showFront() }
+                currentPlayerHandLayout.forEach { CardView -> CardView.showBack() }
                 insertCards(game.midCards, midCardsLayout)
                 midCardsLayout.forEach { CardView -> CardView.showFront() }
             }
@@ -399,7 +422,7 @@ class SwimGameScene(private val rootService: RootService):
                     addComponents(layouts[i], nameLabels[i])
                     insertCards(game.playerList[i].handCards, layouts[i])
                 }
-                currentPlayerHandLayout.forEach { CardView -> CardView.showFront() }
+                currentPlayerHandLayout.forEach { CardView -> CardView.showBack() }
                 insertCards(game.midCards, midCardsLayout)
                 midCardsLayout.forEach { CardView -> CardView.showFront() }
             }

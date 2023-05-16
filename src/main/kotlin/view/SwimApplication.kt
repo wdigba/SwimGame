@@ -43,10 +43,11 @@ class SwimApplication : BoardGameApplication("Swim Game"), Refreshable {
             exit()
         }
         newGameButton.onMouseClicked = {
-
+            newGameMenuScene.resetInputs()
+            this@SwimApplication.showMenuScene(newGameMenuScene)
+            rootService.currentGame = null
         }
     }
-
 
    init {
        this.showMenuScene(newGameMenuScene)

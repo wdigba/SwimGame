@@ -152,6 +152,14 @@ class NewGameMenuScene (private val rootService: RootService) :
         }
         return result
     }
+
+    fun resetInputs() {
+        player1Input.text = ""
+        player2Input.text = ""
+        player3Input.text = ""
+        player4Input.text = ""
+    }
+
     /**
      * default structure with two players
      * */

@@ -8,6 +8,7 @@ package entity
 data class Player (
     val playerName: String,
     var handCards:MutableList<Card>,
+    var cardsRevealed: Boolean = false,
     var points : Float = 0.0f,
     ){
     init {
