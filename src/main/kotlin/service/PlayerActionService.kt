@@ -10,7 +10,6 @@ class PlayerActionService (private val rootService: RootService) : AbstractRefre
         val currentPlayer = game.actPlayer
         currentPlayer.cardsRevealed = true
     }
-
     /**
      * Allows player change one card in hand cards with another card in the middle of the table based on indices
      * @property midCardIndex is an index of middle card that we want to change with one of player´s cards
