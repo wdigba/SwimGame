@@ -81,7 +81,7 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
      * */
     fun calculateWinner() {
         val game = checkNotNull(rootService.currentGame) { "Current game does not exist" }
-        check(game.remainingTurns == 0 || game.deckCards.isEmpty()) { "Game has not been finished yet" }
+        check(game.remainingTurns == 0 || game.deckCards.size < 3) { "Game has not been finished yet" }
 
         val playerScores = mutableMapOf<Player, Float>() // create map of player and its score
         for (player in game.playerList) { // for every player

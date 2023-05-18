@@ -5,6 +5,9 @@ import entity.*
  * "switch one card", "switch all cards", "knock" and "pass"
  */
 class PlayerActionService (private val rootService: RootService) : AbstractRefreshingService() {
+    /** Allows player to reveal cards when the game was started and it´s his turn
+     * once cards were revealed, there is no need to reveal them another time
+     * */
     fun revealCards() {
         val game = checkNotNull(rootService.currentGame) { "Current game does not exist" }
         val currentPlayer = game.actPlayer
@@ -115,6 +118,7 @@ class PlayerActionService (private val rootService: RootService) : AbstractRefre
         if (game.deckCards.size < 3) {
             println("Not enough cards in deck to change mid cards")
             rootService.gameService.calculateWinner()
+            return
         }
         game.midCards.clear()
         game.midCards = game.deckCards.take(3).toMutableList()
