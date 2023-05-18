@@ -3,12 +3,14 @@ package view
 import service.RootService
 import tools.aqua.bgw.core.BoardGameApplication
 /**
- * Implementation of the BGW [BoardGameApplication] for the "Swim Game"
+ * implementation of the BGW [BoardGameApplication] for the "swim game"
+ * the root, that coordinates all scenes of the game
  */
 class SwimApplication : BoardGameApplication("Swim Game"), Refreshable {
 
     private val rootService = RootService()
     private val gameScene = SwimGameScene(rootService)
+    // set actions related to adding and removing players
     private val newGameMenuScene = NewGameMenuScene(rootService).apply {
         var playerCount = 2
         quitButton.onMouseClicked = {
@@ -37,7 +39,7 @@ class SwimApplication : BoardGameApplication("Swim Game"), Refreshable {
             }
         }
     }
-
+    // set actions related to start new game or quit
     private val endMenuScene = GameFinishedMenuScene(rootService).apply {
         exitButton.onMouseClicked = {
             exit()
@@ -48,7 +50,8 @@ class SwimApplication : BoardGameApplication("Swim Game"), Refreshable {
             rootService.currentGame = null
         }
     }
-
+    /** constructor initializes scenes and add option to refresh
+     * */
    init {
        this.showMenuScene(newGameMenuScene)
        this.showGameScene(gameScene)
@@ -59,9 +62,13 @@ class SwimApplication : BoardGameApplication("Swim Game"), Refreshable {
            endMenuScene
        )
     }
+    /** after game was started hides menu scene
+     * */
     override fun refreshAfterStartNewGame() {
         this.hideMenuScene()
     }
+    /** after game was ended shows end scene
+     * */
     override fun refreshAfterCalculateWinner () {
         this.showMenuScene(endMenuScene)
     }
