@@ -125,6 +125,10 @@ class CalculateWinnerTest {
         game.gameService.calculateWinner() //actual
         //the result is given in the same order as players in player list
     }
+    /** result with defined players
+     * method should throw an exception when we try to
+     * get invalid card (not one from range 7 to Ace)
+     * */
     @Test
     fun `test calculateWinner with defined hand cards where CardValue is wrong` () {
         val game = RootService()

@@ -17,8 +17,8 @@ import java.awt.Color
  * or quit the game with [exitButton]
  * */
 class GameFinishedMenuScene (private val rootService: RootService):
-    MenuScene(1000,1000), Refreshable{
-        // labels to output players and their points
+    MenuScene(1000,1000), Refreshable {
+    // label for winner
     private val playerWinLabel = Label(
         width = 800,
         height = 70,
@@ -26,7 +26,7 @@ class GameFinishedMenuScene (private val rootService: RootService):
         posY = 200,
         font = Font(color = Color.WHITE, fontWeight = Font.FontWeight.LIGHT, size = 60)
     )
-
+    // label for "final results" above game results
     private val finalResult = Label(
         width = 300,
         height = 70,
@@ -36,7 +36,7 @@ class GameFinishedMenuScene (private val rootService: RootService):
         font = Font(color = Color.WHITE, fontWeight = Font.FontWeight.LIGHT, size = 36),
         alignment = Alignment.CENTER
     )
-
+    // labels for results of each player
     private val player1Points = Label(
         width = 800,
         height = 70,
@@ -71,6 +71,7 @@ class GameFinishedMenuScene (private val rootService: RootService):
         alignment = Alignment.CENTER,
         font = Font(color = Color.WHITE, fontWeight = Font.FontWeight.LIGHT, size = 30)
     )
+
     // button to start new game (starts from "new game scene")
     val newGameButton = Button(
         width = 350,
@@ -86,11 +87,12 @@ class GameFinishedMenuScene (private val rootService: RootService):
             })
         }
         onMouseExited = {
-            visual  = CompoundVisual(  ColorVisual.WHITE.apply {
+            visual = CompoundVisual(ColorVisual.WHITE.apply {
                 transparency = 1.0
             })
         }
     }
+
     // button to quit the game
     val exitButton = Button(
         width = 350,
@@ -106,61 +108,50 @@ class GameFinishedMenuScene (private val rootService: RootService):
             })
         }
         onMouseExited = {
-            visual  = CompoundVisual(  ColorVisual.WHITE.apply {
+            visual = CompoundVisual(ColorVisual.WHITE.apply {
                 transparency = 1.0
             })
         }
     }
-    /** cleans table to reveal new results
+
+    /** cleans table from previous results
+     * to reveal new results
      * */
-    private fun clearMap(){
-        removeComponents(playerWinLabel, finalResult, player1Points, player2Points,
-            player3Points, player4Points)
+    private fun clearMap() {
+        removeComponents(
+            playerWinLabel, finalResult, player1Points, player2Points,
+            player3Points, player4Points
+        )
     }
+
     /** constructor provides background color and adds buttons
      * */
     init {
         background = ColorVisual(2, 74, 5)
         addComponents(newGameButton, exitButton)
     }
+
     /** method shows players with their names and amount of points
      * provides list of players in descending order based on points
      * when 2 or more players have the same number of points
      * winner is the first listed person
      * */
-    private fun showPlayerPoints(){
+    private fun showPlayerPoints() {
+        //call for current game
         val game = rootService.currentGame
-        checkNotNull(game) {"No started game found."}
-
+        checkNotNull(game) { "No started game found." }
+        // list of labels
         val playerLabels = listOf(player1Points, player2Points, player3Points, player4Points)
-
+        // sorting players based on points in descending order
         val sortedPlayers = game.playerList.sortedByDescending { it.points }
-
+        // player on the top of list wins
         playerWinLabel.text = "${sortedPlayers[0].playerName.uppercase()} WON!"
         addComponents(playerWinLabel, finalResult)
-        // choose how many players table should show
-        when( game.playerList.size ){
-            4 -> {
-                for( i in 0 until 4 ){
-                    playerLabels[i].text = "Player ${sortedPlayers[i].playerName}:  " +
-                            "${sortedPlayers[i].points} points"
-                    addComponents(playerLabels[i])
-                }
-            }
-            3 -> {
-                for( i in 0 until 3 ){
-                    playerLabels[i].text = "Player ${sortedPlayers[i].playerName}:  " +
-                            "${sortedPlayers[i].points} points"
-                    addComponents(playerLabels[i])
-                }
-            }
-            else -> {
-                for( i in 0 until 2 ){
-                    playerLabels[i].text = "Player ${sortedPlayers[i].playerName}:  " +
-                            "${sortedPlayers[i].points} points"
-                    addComponents(playerLabels[i])
-                }
-            }
+        // showing players´ names and their points on table
+        for (i in 0 until game.playerList.size) {
+            playerLabels[i].text = "Player ${sortedPlayers[i].playerName}:  " +
+                    "${sortedPlayers[i].points} points"
+            addComponents(playerLabels[i])
         }
     }
     /** after results were calculated it clears the table

@@ -34,6 +34,9 @@ class ChangeToNextPlayerTest {
         }
         assertEquals(expectedErrorMessage, exception.message)
     }
+    /** trying to change the player when the game
+     * was already over
+     * */
     @Test
     fun `ChangeToNextPlayer when game was over`() {
         val game = RootService()

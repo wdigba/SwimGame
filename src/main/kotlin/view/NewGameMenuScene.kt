@@ -20,7 +20,9 @@ import tools.aqua.bgw.visual.CompoundVisual
  * */
 class NewGameMenuScene (private val rootService: RootService) :
     MenuScene(1000, 1000), Refreshable {
-        // labels and input fields for players 1 - 4
+    /* variables player(Int)Label related to the field "Player (Int)"
+     * variables player(Int)Input related to the field with entered name
+     * */
     private val player1Label = Label(
         width = 200,
         height = 60,
@@ -101,7 +103,7 @@ class NewGameMenuScene (private val rootService: RootService) :
         text = "START",
         font = Font(color = Color.BLACK, fontWeight = Font.FontWeight.LIGHT, size = 36),
         visual = ColorVisual(255,255,255)
-    ).apply {
+    ).apply {//animation for the button
         onMouseEntered = {
             visual = CompoundVisual(ColorVisual.GREEN.apply {
                 transparency = 0.4

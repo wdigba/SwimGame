@@ -11,7 +11,6 @@ import tools.aqua.bgw.core.BoardGameApplication
  * @property endMenuScene end scene shows results and allows to restart game
  */
 class SwimApplication : BoardGameApplication("Swim Game"), Refreshable {
-
     private val rootService = RootService()
     private val gameScene = SwimGameScene(rootService)
     // set actions related to adding and removing players
@@ -76,6 +75,5 @@ class SwimApplication : BoardGameApplication("Swim Game"), Refreshable {
     override fun refreshAfterCalculateWinner () {
         this.showMenuScene(endMenuScene)
     }
-
 }
 
