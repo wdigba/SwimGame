@@ -96,10 +96,10 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
 
                     1 -> {
                         // list consists of one card, we get the value for this suit
-                        val cardValueScore = getCardValueScore(suitCards[0].value)
+                        val cardSum = getCardValueScore(suitCards[0].value)
                         // saving value of the biggest card if all 3 cards are different
-                        if (cardValueScore > maxSameSuitCardsSum) {
-                            maxSameSuitCardsSum = cardValueScore
+                        if (cardSum > maxSameSuitCardsSum) {
+                            maxSameSuitCardsSum = cardSum
                         }
                     }
 
@@ -112,12 +112,22 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
                     }
 
                     3 -> { //if player has 3 cards the same suit
-                        maxSameSuitCardsSum = 30.5f
-                        break
+                        //sum of cards with the same suit
+                        val cardsSum = getCardValueScore(suitCards[0].value) +
+                                getCardValueScore(suitCards[1].value) +
+                                getCardValueScore(suitCards[2].value)
+                        if (cardsSum > maxSameSuitCardsSum) { //check for maximum
+                            maxSameSuitCardsSum = cardsSum
+                        }
                     }
 
                     else -> throw IllegalArgumentException("CardSuit $suit has more than 3 cards")
                 }
+            }
+            // grouping cards with the same value
+            val valueCounts = player.handCards.groupBy { it.value }.values.map { it.size }
+            if (valueCounts.any { it == 3 }) { // if player has three cards of the same value
+                maxSameSuitCardsSum = 30.5f // his score
             }
             score = if (maxSameSuitCardsSum > 0) { // score of player is the biggest sum of the same suit
                 maxSameSuitCardsSum

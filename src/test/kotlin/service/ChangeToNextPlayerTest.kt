@@ -22,5 +22,29 @@ class ChangeToNextPlayerTest {
         assertEquals(game.currentGame!!.actPlayer, game.currentGame!!.playerList.first())
         //we change back for the first player in the list
     }
+    /** trying to change the player when no game was started
+     * */
+    @Test
+    fun `ChangeToNextPlayer without game`() {
+        val game = RootService()
+        game.currentGame = null
+        val expectedErrorMessage = "Current game does not exist"
+        val exception = assertThrows(IllegalStateException::class.java) {
+            game.gameService.changeToNextPlayer()
+        }
+        assertEquals(expectedErrorMessage, exception.message)
+    }
+    @Test
+    fun `ChangeToNextPlayer when game was over`() {
+        val game = RootService()
+        val playerNames = listOf("Max", "Mike", "Lana")
+        game.gameService.startNewGame(playerNames)
+        val expectedErrorMessage = "Game was over"
+        game.currentGame!!.remainingTurns = 0
+        val exception = assertThrows(IllegalStateException::class.java) {
+            game.gameService.changeToNextPlayer()
+        }
+        assertEquals(expectedErrorMessage, exception.message)
+    }
 }
 

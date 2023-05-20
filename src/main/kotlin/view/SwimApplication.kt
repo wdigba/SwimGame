@@ -5,6 +5,10 @@ import tools.aqua.bgw.core.BoardGameApplication
 /**
  * implementation of the BGW [BoardGameApplication] for the "swim game"
  * the root, that coordinates all scenes of the game
+ * @property rootService connects with service layer
+ * @property gameScene BoardGameScene shows game itself
+ * @property newGameMenuScene start scene with ability to choose players
+ * @property endMenuScene end scene shows results and allows to restart game
  */
 class SwimApplication : BoardGameApplication("Swim Game"), Refreshable {
 
