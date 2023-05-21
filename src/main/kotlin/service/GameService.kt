@@ -83,71 +83,85 @@ class GameService (private val rootService: RootService) : AbstractRefreshingSer
         val game = checkNotNull(rootService.currentGame) { "Current game does not exist" }
         check(game.remainingTurns == 0 || game.deckCards.size < 3) { "Game has not been finished yet" }
 
-        val playerScores = mutableMapOf<Player, Float>() // create map of player and its score
-        for (player in game.playerList) { // for every player
-            var score: Float // variable to save score for every player
-            var maxSameSuitCardsSum = 0.0f // variable to save maximum score for every single suit
-            for (suit in CardSuit.values()) { //check through every existing suit
-                val suitCards = player.handCards.filter { it.suit == suit } // list of cards with the same suit
-                when (suitCards.size) { // how many cards of the same suit we have
-                    0 -> {
-                        // nothing happens
-                    }
-
-                    1 -> {
-                        // list consists of one card, we get the value for this suit
-                        val cardSum = getCardValueScore(suitCards[0].value)
-                        // saving value of the biggest card if all 3 cards are different
-                        if (cardSum > maxSameSuitCardsSum) {
-                            maxSameSuitCardsSum = cardSum
-                        }
-                    }
-
-                    2 -> { //player has 2 cards with the same suit
-                        //sum of cards with the same suit
-                        val cardsSum = getCardValueScore(suitCards[0].value) + getCardValueScore(suitCards[1].value)
-                        if (cardsSum > maxSameSuitCardsSum) { //check for maximum
-                            maxSameSuitCardsSum = cardsSum
-                        }
-                    }
-
-                    3 -> { //if player has 3 cards the same suit
-                        //sum of cards with the same suit
-                        val cardsSum = getCardValueScore(suitCards[0].value) +
-                                getCardValueScore(suitCards[1].value) +
-                                getCardValueScore(suitCards[2].value)
-                        if (cardsSum > maxSameSuitCardsSum) { //check for maximum
-                            maxSameSuitCardsSum = cardsSum
-                        }
-                    }
-
-                    else -> throw IllegalArgumentException("CardSuit $suit has more than 3 cards")
-                }
-            }
-            // grouping cards with the same value
-            val valueCounts = player.handCards.groupBy { it.value }.values.map { it.size }
-            if (valueCounts.any { it == 3 }) { // if player has three cards of the same value
-                maxSameSuitCardsSum = 30.5f // his score
-            }
-            score = if (maxSameSuitCardsSum > 0) { // score of player is the biggest sum of the same suit
-                maxSameSuitCardsSum
-            } else {
-                throw IllegalArgumentException("Score for player $player could not be calculated")
-            }
+        val playerScores = calculatePlayerScores(game) //map of player and his score
+        displayWinner(playerScores) //show results
+        onAllRefreshables { refreshAfterCalculateWinner() }
+    }
+    // scores for all players
+    private fun calculatePlayerScores(game: Swim): Map<Player, Float> {
+        val playerScores = mutableMapOf<Player, Float>() //create map of player and his score
+        for (player in game.playerList) { //for every player
+            // variable to save maximum score for every single suit
+            val maxSameSuitCardsSum = calculateMaxSameSuitCardsSum(player)
+            // variable to save final score for every player
+            val score = calculatePlayerScore(player, maxSameSuitCardsSum)
             playerScores[player] = score
             player.points = score
         }
+        return playerScores
+    }
+    // maximum score for every suit
+    private fun calculateMaxSameSuitCardsSum(player: Player): Float {
+        var maxSameSuitCardsSum = 0.0f
+        for (suit in CardSuit.values()) { //check through every existing suit
+            // list of cards with the same suit
+            val suitCards = player.handCards.filter { it.suit == suit }
+            when (suitCards.size) { // how many cards of the same suit player has
+                0 -> {
+                    // nothing happens
+                }
+                1 -> {
+                    val cardSum = getCardValueScore(suitCards[0].value)
+                    // saving value of the biggest card if all 3 cards are different
+                    if (cardSum > maxSameSuitCardsSum) {
+                        maxSameSuitCardsSum = cardSum
+                    }
+                }
+                2 -> {
+                    val cardsSum = getCardValueScore(suitCards[0].value) +
+                            getCardValueScore(suitCards[1].value)
+                    if (cardsSum > maxSameSuitCardsSum) {
+                        maxSameSuitCardsSum = cardsSum
+                    }
+                }
+                3 -> {
+                    val cardsSum = getCardValueScore(suitCards[0].value) +
+                            getCardValueScore(suitCards[1].value) +
+                            getCardValueScore(suitCards[2].value)
+                    if (cardsSum > maxSameSuitCardsSum) {
+                        maxSameSuitCardsSum = cardsSum
+                    }
+                }
+                else -> throw IllegalArgumentException("CardSuit $suit has more than 3 cards")
+            }
+        }
+        return maxSameSuitCardsSum
+    }
+    // maximum score for each player
+    private fun calculatePlayerScore(player: Player, maxSameSuitCardsSum: Float): Float {
+        // grouping cards with the same value
+        val valueCounts = player.handCards.groupBy { it.value }.values.map { it.size }
+        // if player has three cards of the same value
+        return if (valueCounts.any { it == 3 }) {
+            30.5f
+        } else if (maxSameSuitCardsSum > 0) {
+            maxSameSuitCardsSum
+        } else {
+            throw IllegalArgumentException("Score for player $player could not be calculated")
+        }
+    }
+    // shows results
+    private fun displayWinner(playerScores: Map<Player, Float>) {
         //sorted list of players based on score
         val sortedPlayerScores = playerScores.toList().sortedByDescending { it.second }
         val winner = sortedPlayerScores.first()
         //winner is the first player (with the biggest score)
         println("The winner is ${winner.first.playerName} with ${winner.second} points")
-        for (playerScore in sortedPlayerScores.drop(1)) { //other players with their scores
+        //other players with their scores
+        for (playerScore in sortedPlayerScores.drop(1)) {
             println("${playerScore.first.playerName} with ${playerScore.second} points")
         }
-        onAllRefreshables { refreshAfterCalculateWinner() }
     }
-
     /**
      * Receives points for each card based on the rules of the game
      * @throws IllegalArgumentException when cards in stack have value <7
